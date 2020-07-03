@@ -1,0 +1,118 @@
+﻿<%-- 
+Name:
+Author: ZhuJi
+Description: 单表DAL操作类
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="Text"  %>
+<%@ Property Name="SourceDatabase" Type="SchemaExplorer.DatabaseSchema" Category="1.Source" Description="Database that the stored procedures should be based on." %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Category="1.Source"  Optional="True" Description="可选,Table that the object is based on." %>
+
+<%@ Property Name="Unchanged" Type="System.Boolean" Category="2.Common" Default="True" Description="选中,保留原始表名做为类名,否则截去表前缀作为类名" %>
+<%@ Property Name="ProjectNameSpace" Type="String" Category="2.Common" Default="CIIC.XXX" Optional="False" Description="项目的命名空间,即Common包,Entity包的前缀" %>
+
+<%-- Required Properties --%>
+<%@ Property Category="3.DAL" Name="OutputDirectory" 
+    Type="System.String" Default="" Optional="False" 
+    Description="The folder to save the generated files." 
+    Editor="System.Windows.Forms.Design.FolderNameEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" %>
+
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="System" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System" %>
+
+<%@ Register Name="CodeTemplate" Template="DAL_V3_ca.cst" %>
+
+<% GenerateAll(); %>
+<script runat="template">
+//执行入口
+public void GenerateAll()
+{
+   this.GenerateDALBefore();
+}
+
+#region [DAL]
+public void GenerateDALBefore()
+{
+    // Create the output directory if it doesn't already exist.
+    if (!System.IO.Directory.Exists(this.OutputDirectory))
+        System.IO.Directory.CreateDirectory(this.OutputDirectory);
+    
+    if(SourceTable!=null)
+    {
+        this.GenerateDAL();
+    }
+    else
+    {
+        this.GenerateDALAll();
+    }
+}
+
+/// <summary>单表的DAL文件生成
+/// </summary>
+/// <param name="fileName"></param>
+public void GenerateDAL()
+{
+	Response.WriteLine("Rendering: ");
+    //核心步骤
+    CodeTemplate dalView = this.Create<CodeTemplate>();
+    dalView.SourceTable = SourceTable;
+	this.CopyPropertiesTo(dalView);
+    
+    string fileName = this.GetClassName(SourceTable, this.Unchanged) + "DAL.cs";
+    string fullPath = System.IO.Path.Combine(OutputDirectory, fileName);
+    dalView.RenderToFile(fullPath, true);
+    Response.WriteLine("Rendering: "+fullPath);
+}
+
+/// <summary>全表Entity文件生成
+/// </summary>
+public void GenerateDALAll()
+{
+	SchemaExplorer.TableSchemaCollection Tables = SourceDatabase.Tables;
+    CodeTemplate dalView = this.Create<CodeTemplate>();
+    //注:注册参数必须在entityView.SourceTable之前执行
+    this.CopyPropertiesTo(dalView);
+    for (int i = 0, count =Tables.Count; i < count ; i++)
+    {
+        //必须在CopyPropertiesTo(entityView)之后执行
+        dalView.SourceTable = Tables[i];
+        string fileName = this.GetClassName(Tables[i], this.Unchanged) + "DAL.cs";
+        string fullPath = System.IO.Path.Combine(OutputDirectory, fileName);
+        dalView.RenderToFile(fullPath, true);
+	    Response.WriteLine("Rendering: "+fileName);
+    }
+}
+
+#endregion
+
+/// <summary>根据TableName格式化Class Name,驼峰风格
+/// </summary>
+/// <param name="table"></param>
+/// <param name="hasTablePerfix">true:保留TableName的前缀</param>
+/// <returns></returns>
+public string GetClassName(TableSchema table, Boolean Unchanged)
+{
+   if(table==null)
+   {
+	  return null;
+   }
+   if(Unchanged)
+   {
+       return table.Name;
+   }
+   else
+   {
+      if(table.Name.IndexOf("_")==-1)
+      {
+          return StringUtil.ToPascalCase(table.Name);
+      }
+      else
+      {
+          return StringUtil.ToPascalCase(table.Name.Substring(table.Name.IndexOf("_")));
+      }
+   }
+}
+</script>

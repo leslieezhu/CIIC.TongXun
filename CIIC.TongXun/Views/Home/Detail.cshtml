@@ -1,0 +1,34 @@
+﻿@model ZJ.App.Entity.ArticleEntity
+<table class="content" width="800" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr>
+        <td width="95" valign="top" background="images/tx_24.jpg"><img src="images/tx_24.jpg" width="95" height="520" /></td>
+        <td valign="top">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td><img src="images/@ViewBag.DetailImg" width="140" height="37" /></td>
+                    <td align="right" valign="bottom">&nbsp;</td>
+                </tr>
+            </table>
+            <table width="92%" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td height="20">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="articlecontent">
+                        <p align="center">
+                            <span class="txt14" style="display: block; text-align: center;">@Model.ArticleTitle</span></p>
+                        @Html.Raw(@Model.ArticleContent)
+                        @foreach (var item in Model.ImgFileArray)
+                        {
+                        <p align="center"><img width="600px" src="@item" border="0" /></p>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td height="60" align="right"><a href="@ViewBag.DetailReturnURL"><img src="images/back.jpg" /></a></td>
+                </tr>
+            </table>
+        </td>
+        <td width="95" valign="top" background="images/tx_27.jpg"><img src="images/tx_27.jpg" width="95" height="520" /></td>
+    </tr>
+</table>

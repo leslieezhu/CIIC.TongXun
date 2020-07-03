@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "添加期刊";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>@ViewBag.Title</h2>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Journal",new { area = "Admin"})">期刊列表</a></li>
+            <li class="active">
+                <strong>@ViewBag.Title</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <form id="form1">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">期刊名:</label>
+                                <div class="col-md-8 input-group">
+                                    @Html.TextBox("journalName", null, new { @class = "form-control", data_model = "journal.JournalName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">期刊期号:</label>
+                                <div class="col-md-8 input-group">
+                                    @Html.TextBox("journalProperty", null, new { @class = "form-control", data_model = "journal.PropertyName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <center>
+                            <a href="javascript:void(0);" class="btn btn-success" id="btnSave"><i class="fa fa-save"></i> 保存 </a>
+                        </center>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+    @Scripts.Render("~/Scripts/common.js")
+    @Scripts.Render("~/Scripts/ControlJS/journal_create.js")
+}
+

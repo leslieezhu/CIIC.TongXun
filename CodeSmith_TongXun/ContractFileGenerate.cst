@@ -1,0 +1,31 @@
+﻿<%-- 
+快速生成IXxxContract.cs文件
+--%>
+<%@ Template Language="C#" TargetLanguage="Text" %>
+<%@ Property Name="ProjectNameSpace" Type="String" Category="1.Common" Default="CIIC.XXX" Optional="False" Description="项目的命名空间,即Common包,Entity包,DAL包的前缀" %>
+<%@ Property Name="ContractName" Type="String" Category="1.Common" Default="XXX" Optional="False" Description="Contract名字,一个Contract对应一个BLL" %>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.ServiceModel;
+using System.Data;
+using <%= ProjectNameSpace %>.Common;
+using <%= ProjectNameSpace %>.Entity;
+
+namespace <%= ProjectNameSpace %>.Contract
+{
+    [ServiceContract]
+    public interface I<%= ContractName %>Contract
+    {
+
+    }
+}
+<script runat="template">
+// My methods here.
+public override string GetFileName()
+{
+	return "I"+this.ContractName+"Contract.cs";
+}
+</script>

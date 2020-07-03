@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "DataTables";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTables CheckboxDemo 服务端解决</title>
+    <link href="/Content/plugins/dataTables/site-examples.css" rel="stylesheet" />
+    <link href="/Content/plugins/dataTables/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="/Content/plugins/dataTables/select.dataTables.min.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery/3.3.1/jquery-3.3.1.js" type="text/javascript"></script>
+    <script src="/Scripts/plugins/dataTables/1.10.20/jquery.datatables.min.js" type="text/javascript"></script>
+    <script src="/Scripts/plugins/dataTables/dataTables.select.min.js" type="text/javascript"></script>
+    <style type="text/css">
+        /*td.select-checkbox {
+            background: url('https://img.icons8.com/metro/26/000000/unchecked-checkbox.png') no-repeat center center;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        tr.checked td.select-checkbox {
+            padding: 10px;
+            background: url('https://upload.wikimedia.org/wikipedia/donate/a/ac/Ooui-checkbox-selected-focus.svg') no-repeat center center;
+        }*/
+
+        th.select-checkbox { background: url('/Content/plugins/img/unchecked-checkbox.png') no-repeat center center; padding: 10px; cursor: pointer; }
+
+        tr.checked th.select-checkbox {
+            padding: 10px;
+            background: url('/Content/plugins/img/Ooui-checkbox-selected-focus.svg') no-repeat center center;
+        }
+    </style>
+    <script type="text/javascript" class="init">
+        $(document).ready(function () {
+            var search = {};
+            var table = $('#example').DataTable({
+                paging: true,
+                lengthChange: false,
+                autoWidth: false,
+                ordering: false,
+                serverSide: true,
+                pageLength: 15,
+                destroy: true,
+                searching: false,
+                info: true,
+                columns: [
+                    { data: "", width: "2%" },
+                    { data: "NoOfJournal", title: "ID", width: "2%" },
+                    { data: "NoOfCategory", title: "类序", width: "7%" },
+                    { data: "ArticleTitle", title: "文章名", class: "wordwrap ellipsis", width: "50%" },
+                    { data: "CategoryName", title: "类别", width: "25%" },
+                    { data: "CreateTime", title: "录入时间", width: "7%" },
+                    { data: "", width: "2%" },
+                ],
+                columnDefs: [{
+                    targets: 0,
+                    defaultContent: '',
+                    orderable: false,
+                    className: 'select-checkbox'
+                }],
+                select: {
+                    style: 'multi',
+                    selector: 'td:first-child'
+                },
+                order: [[1, 'asc']],
+                ajax: {
+                    url: "/Admin/Article/GetList",
+                    type: "POST",
+                    data: search
+                }
+            });
+
+            //$('#example').on('click', 'td.checkbox-control', function () {
+            //    $(this).parent().toggleClass('checked');
+            //});
+
+            $('#example').on('click', 'th.select-checkbox', function () {
+                $(this).parent().toggleClass('checked');
+
+                if ($(this).parent().is(".checked")) {
+                    table.rows({ page: 'current' }).select();
+                } else {
+                    table.rows({ page: 'current' }).deselect();
+                }
+            });
+        });
+    </script>
+
+</head>
+<body class="wide comments example">
+    <table id="example" class="display" style="width:100%">
+    </table>
+</body>
+</html>
+

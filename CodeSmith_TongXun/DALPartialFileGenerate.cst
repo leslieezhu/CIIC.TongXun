@@ -1,0 +1,72 @@
+﻿<%@ CodeTemplate Language="C#" TargetLanguage="C#" ResponseEncoding="UTF-8" Description="Generates a very simple business object." %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Category="1.Source" Optional="True" Description="Table that the object is based on." %>
+
+<%@ Property Name="Unchanged" Type="System.Boolean" Category="2.Common" Default="True" Description="勾选表示生成的类名同表名,否则截取表前缀作为类名" %>
+<%@ Property Name="ProjectNameSpace" Type="String" Category="2.Common" Default="CIIC.XXX" Optional="False" Description="项目的命名空间,即Common包,Entity包,DAL包的前缀" %>
+
+<%@ Map Name="SqlNativeDbType" Src="SqlNativeType-DbType" Description="SqlNativeType to DbType Map" %>
+<%@ Map Name="CSharpAlias" Src="System-CSharpAlias" Description="System to C# Type Map" %>
+<%@ Map Name="DbTypeDataReaderMethod" Src="DbType-DataReaderMethod" Description="DbType-DataReaderMethod" %>
+
+<%@ Assembly Name="SchemaExplorer"%>
+<%@ Assembly Name="System.Data"%>
+<%@ Import Namespace="SchemaExplorer"%>
+<%@ Import Namespace="System.Data"%>
+<%@ Import Namespace="System.Text"%>
+
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.Common;
+using System.Collections.Generic;
+using <%= ProjectNameSpace %>.Common;
+using <%= ProjectNameSpace %>.Entity;
+
+
+namespace <%= ProjectNameSpace %>.DAL
+{
+    /// <summary>
+    /// Data Access Layer class <%= SourceTable %>.
+    /// </summary>
+    public partial class <%= GetClassName(SourceTable,Unchanged) %>DAL
+    {
+        public DataTable Get<%= GetClassName(SourceTable,Unchanged) %>Paged(List<SqlDbParameter> parms, string OrderBy, int PageSize, int PageIndex, out int RecordCount)
+        {
+            String sqlString = @"SELECT * FROM <%= SourceTable.Name %>";
+            sqlString = SqlDbParameter.BuildSqlString(sqlString, parms);
+            return this.GetAll(sqlString, parms, OrderBy, PageSize, PageIndex, out RecordCount);
+        }
+    }
+}
+
+<script runat="template">
+    public string GetClassName(TableSchema table, Boolean unchanged)
+    {
+        if(table==null)
+        {
+            return null;
+        }
+        if(unchanged)
+        {
+            return table.Name;
+        }
+        else
+        {
+            if(table.Name.IndexOf("_") != -1)
+            {
+                return StringUtil.ToPascalCase(table.Name.Substring(table.Name.IndexOf("_")));
+            }
+            return StringUtil.ToPascalCase(table.Name);
+        }
+    }
+
+    
+    /// <summary>设置生成文件名, 同时也对应代码输出窗口Title上的文件名
+    /// </summary>
+    /// <returns></returns>
+    public override string GetFileName()
+    {
+    	return this.GetClassName(this.SourceTable, this.Unchanged) + "DAL.cs";
+    }
+
+</script>

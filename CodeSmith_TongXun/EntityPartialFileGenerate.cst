@@ -1,0 +1,62 @@
+﻿<%-- 
+快速生成空的 Partical XxxEntity.cs文件
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#"  ResponseEncoding="UTF-8" Description="Generates a very simple business object." %>
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema" Category="1.Source" Optional="True" Description="Table that the object is based on." %>
+
+<%@ Property Name="Unchanged" Type="System.Boolean" Category="2.Common" Default="True" Description="选中,保留原始表名做为类名,否则截去表前缀作为类名" %>
+<%@ Property Name="ProjectNameSpace" Type="String" Category="2.Common" Default="CIIC.XXX" Optional="False" Description="项目的命名空间,即Common包,Entity包的前缀" %>
+
+<%@ Map Name="CSharpAlias" Src="System-CSharpAlias" Description="System to C# Type Map" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="System" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System" %>
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Runtime.Serialization;
+using <%= ProjectNameSpace %>.Common;
+
+<%
+string ClassName=GetClassName(SourceTable,Unchanged);//根据当前"表名"生成所映射的"实体类"名
+ClassName += "Entity";
+%>
+namespace <%= ProjectNameSpace %>.Entity
+{
+    public partial class <%= ClassName %>Entity
+    {
+	
+	}
+}
+<script runat="template">
+public string GetClassName(TableSchema table, Boolean unchanged)
+{
+   if(table==null)
+   {
+	  return null;
+   }
+   if(unchanged)
+   {
+     return table.Name;
+   }
+   else
+   {
+     if(table.Name.IndexOf("_") != -1)
+     {
+        return StringUtil.ToPascalCase(table.Name.Substring(table.Name.IndexOf("_")));
+     }
+     return StringUtil.ToPascalCase(table.Name);
+   }
+}
+
+public override string GetFileName()
+{
+	return this.GetClassName(this.SourceTable, this.Unchanged) + "Entity.cs";
+}
+</script>

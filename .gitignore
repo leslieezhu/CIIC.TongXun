@@ -1,0 +1,13 @@
+bin/
+obj/
+.settings/
+.vs/
+.svn/
+*.dbmdl
+*.jfm
+*.csproj.user
+/portal/node_modules
+/CIIC.TongXun/newsimg
+/CIIC.TongXun/HtmlOutput
+/CIIC.TongXun/packages.config
+/packages

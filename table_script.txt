@@ -1,0 +1,4 @@
+--Artcle 增加别名字段,在列表显示时自定义显示文章名,有些情况,不直接用文字原标题在列表上显示
+ALTER TABLE Article Add [ArticleTitleAlias] nvarchar(200)
+--置顶字段,即在首页显示
+ALTER TABLE Article Add [IsTop] int  NULL 
