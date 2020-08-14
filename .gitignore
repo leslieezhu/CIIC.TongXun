@@ -9,5 +9,6 @@ obj/
 /portal/node_modules
 /CIIC.TongXun/newsimg
 /CIIC.TongXun/HtmlOutput
+/CIIC.TongXun/uploadTmp
 /CIIC.TongXun/packages.config
 /packages
