@@ -7,6 +7,9 @@ namespace ZJ.App.Common.Constants
 {
     public class Constants
     {
+        /// <summary>
+        ///  对应 ArticleCategory id, 对应文章类别 CategoryId
+        /// </summary>
         public static  Dictionary<string, int> ChannelToCategory = new Dictionary<string, int>
         {
             { "jt",1 }, //集团新闻
@@ -22,7 +25,8 @@ namespace ZJ.App.Common.Constants
             { "yw_rcgw",12},//改革前沿//TODO 增加文章类别
             { "yw_kc",13},//科创公司//TODO 增加文章类别
             { "yw_dw",14},//党委
-            { "yw_flsw",15}//法律事务部
+            { "yw_flsw",15},//法律事务部
+            { "yw_pxzx",16}  //培训中心
         };
     }
 }

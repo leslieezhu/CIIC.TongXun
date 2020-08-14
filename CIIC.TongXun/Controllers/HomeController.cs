@@ -159,7 +159,7 @@ namespace CIIC.TongXun.Controllers
                 //int[] categoryArray = { 6, 7, 8, 9,12,13,14,15};  //外企服务公司-6;关爱通公司-7,培训部-8,工会联合会-9;人才顾问公司-12//TODO 增加文章类别,13:科创公司,14党委,15法律事务部
                 //获取"业务动态"子类别,即根据PId获取类别记录
                 ArticleCategoryBLL articleCategoryBLL = new ArticleCategoryBLL();
-                categoryList = articleCategoryBLL.GetArticleCategoryEntitiesByPId(3, "Id");  //分类信息排序
+                categoryList = articleCategoryBLL.GetArticleCategoryEntitiesByPId(3, "[Order]");  //获取业务动态下的子类别,3表示业务动态
 
                 List<SqlDbParameter> orParms = new List<SqlDbParameter>();
                 for (int i = 0; i < categoryList.Count; i++)
@@ -225,7 +225,7 @@ namespace CIIC.TongXun.Controllers
             }
             if (Request.QueryString["static"] == "1")
             {
-                string html = CommentHelper.RenderViewToString(this.ControllerContext, viewPath, resultList);
+                string html = CommentHelper.RenderViewToString(this.ControllerContext, viewPath, new ChannlModel(categoryList, resultList));
                 string outputDir = HttpContext.Server.MapPath(ConfigurationManager.AppSettings["HtmlOutput"]) + "\\" + currentJournalEntity.JournalName + "\\";
                 if (!Directory.Exists(outputDir))
                 {
@@ -355,7 +355,8 @@ namespace CIIC.TongXun.Controllers
                 { "yw_rcgw",articleDetialImg_YW},//TODO 增加文章类别+Constants.cs
                 { "yw_kc",articleDetialImg_YW},
                 { "yw_dw",articleDetialImg_YW},
-                { "yw_flsw",articleDetialImg_YW}
+                { "yw_flsw",articleDetialImg_YW},
+                { "yw_pxzx",articleDetialImg_YW}  //培训中心
             };
             //1.详细页上的图标
             ViewBag.DetailImg = listImage[categoryKey];//类别图片
