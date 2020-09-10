@@ -13,6 +13,7 @@ namespace ZJ.App.BLL
     {
         public DataTable GetArticleDataTablePage(List<SqlDbParameter> parms, string OrderBy, int PageSize, int PageIndex, out int RecordCount)
         {
+
             ArticleDAL articleDAL = new ArticleDAL();
             DataTable dataTable = articleDAL.GetArticleDataTablePage(parms, OrderBy, PageSize, PageIndex, out RecordCount);
             //TO DO Cache 

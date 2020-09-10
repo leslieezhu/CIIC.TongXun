@@ -57,7 +57,7 @@ function bindArticleList()
     );  
 
     var table = $('#journalList').DataTable(tableData);
-
+    table.columns.adjust().draw();
     $('#journalList').on('click', 'th.select-checkbox', function () {
         $(this).parent().toggleClass('checked');
 

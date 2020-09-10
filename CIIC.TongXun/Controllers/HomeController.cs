@@ -31,6 +31,14 @@ namespace CIIC.TongXun.Controllers
             List<SqlDbParameter> parms = new List<SqlDbParameter>();
             SqlDbParameter parm;
 
+            //默认条件IsDelete!=1,软删标准
+            parm = new SqlDbParameter();
+            parm.ColumnName = "IsDelete";
+            parm.ParameterName = "IsDelete";
+            parm.QualificationType = SqlDbParameter.QualificationSymbol.IsNull;
+            parm.ColumnType = DbType.Int32;
+            parms.Add(parm);
+
             //获取某一期的首页文章列表
             parm = new SqlDbParameter();
             parm.ColumnName = "JournalId";
@@ -86,13 +94,18 @@ namespace CIIC.TongXun.Controllers
                 html = CommentHelper.RenderViewToString(this.ControllerContext, viewPath, resultList);
                 html = string.Format(html, ConfigurationManager.AppSettings["ProductDiretory"]);//处理模板中的本期目录
 
-                curURL = "/indexEmail.html";
+                //邮件页面保存目录
+                outputDir += "\\mail\\";
+                if (!Directory.Exists(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+                curURL = "index.html"; //输出保存的文件名
+
                 System.IO.File.WriteAllText(outputDir + curURL, html);
                 //3.HomePage截图
                 HtmlImageCapture();
             }
-
-
 
             return View(resultList);
         }
@@ -125,6 +138,14 @@ namespace CIIC.TongXun.Controllers
             parm.ParameterName = "JournalId";
             parm.ParameterValue = currentJournalEntity.JournalId;//当前期刊Id
             parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
+            parms.Add(parm);
+
+            //默认条件IsDelete!=1,软删标准
+            parm = new SqlDbParameter();
+            parm.ColumnName = "IsDelete";
+            parm.ParameterName = "IsDelete";
+            parm.QualificationType = SqlDbParameter.QualificationSymbol.IsNull;
+            parm.ColumnType = DbType.Int32;
             parms.Add(parm);
 
             List<ArticleEntity> resultList = new List<ArticleEntity>();
@@ -268,7 +289,7 @@ namespace CIIC.TongXun.Controllers
             string noOfCategoryKey = string.Empty;//类别序数
 
             string regexStr = @"\D+";
-            Regex regex = new Regex(regexStr,RegexOptions.IgnoreCase);//
+            Regex regex = new Regex(regexStr,RegexOptions.IgnoreCase);//抓取文章类别标识
             MatchCollection matchs= regex.Matches(routeMapValue);
             foreach (Match match in matchs)
             {
@@ -280,9 +301,8 @@ namespace CIIC.TongXun.Controllers
             matchs = regex.Matches(routeMapValue);
             foreach (Match match in matchs)
             {
-                noOfCategoryKey = match.Groups[0].Value;
+                noOfCategoryKey = match.Groups[0].Value; //如果文章不属于任何类别,为文章主键
             }
-
             //期刊Id JournalId:如果请求中带期刊Id就使用,如果没有提供,则使用默认当前期刊Id
             string defaultJournalId = Request.QueryString["JournalId"];
             if (string.IsNullOrEmpty(defaultJournalId)) {
@@ -292,27 +312,40 @@ namespace CIIC.TongXun.Controllers
             ArticleBLL articleBLL = new ArticleBLL();
             List<SqlDbParameter> parms = new List<SqlDbParameter>();
             SqlDbParameter parm = new SqlDbParameter();
-            parm.ColumnName = "JournalId";
-            parm.ParameterName = "JournalId";
-            parm.ParameterValue = defaultJournalId;//当前期刊Id
-            parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
-            parms.Add(parm);
+            
+            if (categoryKey == "nocategory")
+            {
+                parm.ColumnName = "A.Id";
+                parm.ParameterName = "Id";
+                parm.ParameterValue = noOfCategoryKey;//当前文章Id
+                parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
+                parms.Add(parm);
+            }
+            else //通过期刊ID,类别ID, 以及该类别下的序号获取文章(有局限性,即当文章没有类别时,无法通过此逻返回文章)
+            {
+                parm.ColumnName = "JournalId";
+                parm.ParameterName = "JournalId";
+                parm.ParameterValue = defaultJournalId;//当前期刊Id
+                parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
+                parms.Add(parm);
 
-            parm = new SqlDbParameter();
-            parm.ColumnName = "CategoryId";
-            parm.ParameterName = "CategoryId";
-            parm.ParameterValue = Constants.ChannelToCategory[categoryKey]; ;//文章类别
-            parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
-            parms.Add(parm);
+                parm = new SqlDbParameter();
+                parm.ColumnName = "CategoryId";
+                parm.ParameterName = "CategoryId";
+                parm.ParameterValue = Constants.ChannelToCategory[categoryKey]; ;//文章类别
+                parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
+                parms.Add(parm);
 
-            int _noOfCategory = 0;
-            int.TryParse(noOfCategoryKey, out _noOfCategory);
-            parm = new SqlDbParameter();
-            parm.ColumnName = "NoOfCategory";
-            parm.ParameterName = "NoOfCategory";
-            parm.ParameterValue = _noOfCategory;//改类别序号
-            parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
-            parms.Add(parm);
+                int _noOfCategory = 0;
+                int.TryParse(noOfCategoryKey, out _noOfCategory);
+                parm = new SqlDbParameter();
+                parm.ColumnName = "NoOfCategory";
+                parm.ParameterName = "NoOfCategory";
+                parm.ParameterValue = _noOfCategory;//该类别序号
+                parm.QualificationType = SqlDbParameter.QualificationSymbol.Equal;
+                parms.Add(parm);
+            }
+
             DataTable dt = articleBLL.GetArticleDataTable(parms);
             ArticleEntity article = new ArticleEntity();
             if (dt.Rows.Count > 0)
@@ -328,6 +361,13 @@ namespace CIIC.TongXun.Controllers
                 parm.ParameterName = "ArticleId";
                 parm.ParameterValue = article.Id;
                 parms.Add(parm);
+
+                parm = new SqlDbParameter();
+                parm.QualificationType = SqlDbParameter.QualificationSymbol.IsNull;
+                parm.ColumnName = "IsDelete";
+                parm.ParameterName = "IsDelete";
+                parms.Add(parm);
+
                 List<ArticleImageEntity> articleList =  articleImageBLL.GetAllArticleImage(parms);
                 //TODO Config
                 string imageDictory = ConfigurationManager.AppSettings["AriticleImagePath"];
@@ -338,28 +378,9 @@ namespace CIIC.TongXun.Controllers
                 }
             }
 
-            //TODO 判断  categoryKey 是否存在
-            string articleDetialImg_YW = "tx_35.png";
-            Dictionary<string, string> listImage = new Dictionary<string, string>
-            {
-                { "jt","tx_25.png" }, //集团新闻
-                { "gs","tx_33.png" }, //公司新闻
-                { "yw","tx_35.png"}, //业务动态
-                { "jiaojuguoqi","jujiaoguoqi.png"},//聚焦国企
-                { "jiaojuguoqi_guozhiyaowen","guoziyaowen.png"},//国资要闻
-                { "jiaojuguoqi_gaigeqianyan","gaigeqianyan.png"},//改革前沿
-                { "yw_wq",articleDetialImg_YW},
-                { "yw_gat",articleDetialImg_YW},
-                { "yw_px",articleDetialImg_YW},
-                { "yw_gh",articleDetialImg_YW},
-                { "yw_rcgw",articleDetialImg_YW},//TODO 增加文章类别+Constants.cs
-                { "yw_kc",articleDetialImg_YW},
-                { "yw_dw",articleDetialImg_YW},
-                { "yw_flsw",articleDetialImg_YW},
-                { "yw_pxzx",articleDetialImg_YW}  //培训中心
-            };
             //1.详细页上的图标
-            ViewBag.DetailImg = listImage[categoryKey];//类别图片
+            ViewBag.DetailImg = Constants.ListImage[categoryKey];//类别图片
+
             //2.详细页之返回各类别新闻列表页的url
             string detailReturnURL = "news_list_yw.html";
             if (categoryKey == "jt" || categoryKey == "gs")
@@ -407,7 +428,7 @@ namespace CIIC.TongXun.Controllers
             Bitmap m_Bitmap = WebSiteThumbnail.GetWebSiteThumbnail(urlHead, 800, 960, 800, 960); //http://localhost:58321/
             //m_Bitmap.Save("D:/XXX/" + "text.png", System.Drawing.Imaging.ImageFormat.Png);
 
-            string outputDir = HttpContext.Server.MapPath(ConfigurationManager.AppSettings["HtmlOutput"]) + "\\" + currentJournalEntity.JournalName + "\\";
+            string outputDir = HttpContext.Server.MapPath(ConfigurationManager.AppSettings["HtmlOutput"]) + "\\" + currentJournalEntity.JournalName + "\\mail\\images\\";
             if (!Directory.Exists(outputDir))
             {
                 Directory.CreateDirectory(outputDir);
@@ -416,7 +437,7 @@ namespace CIIC.TongXun.Controllers
             //在这个页面上再绘制banner图片
             using (Graphics gp = Graphics.FromImage(m_Bitmap))
             {
-                string bannerImg = HttpContext.Server.MapPath("~") + "\\images\\banner_2.jpg";    //banner_1~4.jpg 可以定期更换
+                string bannerImg = HttpContext.Server.MapPath("~") + "\\images\\banner_4.jpg";    //banner_1~4.jpg 可以定期更换
                 gp.DrawImage(Image.FromFile(bannerImg), 47, 131, 702, 184); //必须设置比例,否则会失真
             }
 

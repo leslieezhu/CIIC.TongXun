@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ArticleCategoryDAL.cs" />
     <Compile Include="ArticleDAL.cs" />
+    <Compile Include="ArticleImageDAL.cs" />
     <Compile Include="ArticleJournalDAL.cs" />
     <Compile Include="Generated\ArticleCategoryDAL.cs" />
     <Compile Include="Generated\ArticleDAL.cs" />

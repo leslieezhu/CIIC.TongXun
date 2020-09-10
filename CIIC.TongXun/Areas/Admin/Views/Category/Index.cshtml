@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Category List";
+}
+
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>PCategoryName</th>
+            <th>CategoryName</th>
+            <th>Order</th>
+        </tr>
+    </thead>
+</table>
+<div class="row">
+    <div class="col-md-2">Id</div>
+    <div class="col-md-2">PCategoryName</div>
+    <div class="col-md-2">CategoryName</div>
+    <div class="col-md-2">Order</div>
+</div>
+<div class="row">
+    <div class="col-md-2" id="categoryId"></div>
+    <div class="col-md-2" id="pcategoryName"></div>
+    <div class="col-md-2"><input type="text" class="form-control input-sm" id="category" data-model="category.CategoryName" /></div>
+    <div class="col-md-2"><input type="text" class="form-control input-sm" id="order" data-model="category.Order" /></div>
+    <input type="hidden" id="hdCategoryId" data-model="category.Id" />
+    <div class="col-md-2">
+        <div class="pull-right">
+            <a class="btn btn-sm btn-primary" id="btnCreate"> 保存 </a>
+        </div>
+    </div>
+</div>
+@section Styles {
+    @Styles.Render("~/Content/dataTablesStyles")
+    <style type="text/css">
+
+    </style>
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/dataTables")
+    @Scripts.Render("~/Scripts/common.js")
+    @Scripts.Render("~/Scripts/ControlJS/category_index.js")
+}

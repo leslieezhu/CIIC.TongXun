@@ -1,0 +1,26 @@
+﻿@using System.Data
+@using ZJ.App.Entity;
+@model IEnumerable<ArticleCategoryEntity>
+
+<select id="sel_menu2" multiple="multiple" class="form-control">
+    @{
+        if (Model != null)
+        {
+            foreach (ArticleCategoryEntity item in Model)
+            {
+                if (item.Level == 1)
+                {
+                    <optgroup value="@item.Id" label="@item.CategoryName">
+                        @{
+                            List<ArticleCategoryEntity> SubCategory = Model.Where(t => t.PId == item.Id && t.Level.Value == 2).OrderBy(t => t.Order).ToList();
+                            foreach (var subItem in SubCategory)
+                            {
+                                <option value="@subItem.Id">@subItem.CategoryName</option>
+                            }
+                        }
+                    </optgroup>
+                }
+            }
+        }
+    }
+</select>

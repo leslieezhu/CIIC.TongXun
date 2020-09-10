@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="ArticleBLL.cs" />
     <Compile Include="ArticleCategoryBLL.cs" />
+    <Compile Include="ArticleImageBLL.cs" />
     <Compile Include="ArticleJournalBLL.cs" />
     <Compile Include="BllBase.cs" />
     <Compile Include="Generated\ArticleBLL.cs" />

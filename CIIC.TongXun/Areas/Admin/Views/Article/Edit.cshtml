@@ -46,7 +46,8 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">类别:</label>
                                 <div class="col-md-8 input-group">
-                                    @Html.DropDownList("ArticleCategory", null, new { @class = "form-control", data_model = "article.CategoryId" })
+                                    <select class="js-example-data-array form-control"></select>
+                                    @Html.Hidden("ArticleCategory", Model.CategoryId)
                                 </div>
                             </div>
                         </div>
@@ -54,7 +55,7 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">文章序号:</label>
                                 <div class="col-md-8 input-group">
-                                    @Html.TextBox("NoOfJournal", Model.NoOfJournal, new { @class = "form-control", data_model = "article.NoOfJournal" })
+                                    @Html.TextBox("NoOfJournal", Model.NoOfJournal, new { @class = "form-control", data_model = "article.NoOfJournal", data_val = "true", data_val_required = "不能为空！" })
                                 </div>
                             </div>
                         </div>
@@ -123,6 +124,19 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">图片:</label>
+                                <div class="col-md-10 input-group">
+                                    <div id="imgList" class="media">
+
+                                    </div>
+                                    <input id="fileupload" type="file" name="files">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <center>
                             <a href="javascript:void(0);" class="btn btn-success" id="btnSave"><i class="fa fa-save"></i> 保存 </a>
                         </center>
@@ -134,6 +148,9 @@
 </div>
 @section Styles {
     @Styles.Render("~/Content/jQueryFileUploadCss")
+    <style>
+
+    </style>
 }
 @section scripts {
     @Scripts.Render("~/bundles/jQueryFileUpload")

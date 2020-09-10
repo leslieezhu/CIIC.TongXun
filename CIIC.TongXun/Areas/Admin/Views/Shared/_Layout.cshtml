@@ -6,6 +6,7 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/Admin/css")
     @Styles.Render("~/font-awesome/css")
+    @Styles.Render("~/Content/select2Styles")
     @Scripts.Render("~/bundles/modernizr")
     @RenderSection("Styles", required: false)
 </head>
@@ -21,8 +22,7 @@
                 @Html.ActionLink("Application name", "Index", "Article", new { area = "Admin" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                </ul>
+                <ul class="nav navbar-nav"></ul>
             </div>
         </div>
     </div>
@@ -36,7 +36,9 @@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/select2")
     @RenderSection("scripts", required: false)
 </body>
 </html>

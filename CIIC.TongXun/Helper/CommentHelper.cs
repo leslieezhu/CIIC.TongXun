@@ -105,6 +105,11 @@ namespace CIIC.TongXun
         }
         #endregion
 
+        /// <summary>
+        /// 模拟发送get请求
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="param"></param>
         public static void HttpWebRequestGet(string url, string param=null)
         {
             if (param != null)

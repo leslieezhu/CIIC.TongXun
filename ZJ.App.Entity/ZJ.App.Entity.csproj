@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity\ArticleEntity.cs" />
+    <Compile Include="Entity\ArticleImageEntity.cs" />
     <Compile Include="Generated\ArticleCategoryEntity.cs" />
     <Compile Include="Generated\ArticleEntity.cs" />
     <Compile Include="Generated\ArticleImageEntity.cs" />

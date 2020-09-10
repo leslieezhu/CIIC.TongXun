@@ -46,15 +46,15 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">类别:</label>
                                 <div class="col-md-8 input-group">
-                                    @Html.DropDownList("ArticleCategory", null, new { @class = "form-control", data_model = "article.CategoryId" })
+                                    <select class="js-example-data-array form-control"></select>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="col-md-4 control-label">文章序号:</label>
+                                <label class="col-md-4 control-label" for="NoOfJournal">文章序号:</label>
                                 <div class="col-md-8 input-group">
-                                    @Html.TextBox("NoOfJournal", null, new { @class = "form-control", data_model = "article.NoOfJournal" })
+                                    @Html.TextBox("NoOfJournal", null, new { @class = "form-control", data_model = "article.NoOfJournal", data_val = "true" })
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label"><span style="color:red">*</span>文章标题</label>
                                 <div class="col-md-9 input-group">
-                                    @Html.TextArea("ArticleTitle", null, new { @class = "form-control", required = "required", data_model = "article.ArticleTitle", style = "max-width: 100%;height:75px" })
+                                    @Html.TextArea("ArticleTitle", null, new { @class = "form-control", required = "required", data_model = "article.ArticleTitle", data_val = "true", data_val_required = "不能为空！", style = "max-width: 100%;height:75px" })
                                 </div>
                             </div>
                         </div>
@@ -82,7 +82,7 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label">文章标题别名<br />(可选)</label>
                                 <div class="col-md-9 input-group">
-                                    @Html.TextArea("ArticleTitleAlias", null, new { @class = "form-control", required = "required", data_model = "article.ArticleTitleAlias", style = "max-width: 100%;height:75px" })
+                                    @Html.TextArea("ArticleTitleAlias", null, new { @class = "form-control", data_model = "article.ArticleTitleAlias", style = "max-width: 100%;height:75px" })
                                 </div>
                             </div>
                         </div>

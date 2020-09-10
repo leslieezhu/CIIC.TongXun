@@ -128,7 +128,7 @@ namespace ZJ.App.Entity
         public const string FieldName_Href = "Href";
         private string _Href;
         ///<summary>
-        ///
+        /// 文章静态URL,由HrefTpl模板决定
         ///</summary>
         [DataMember]
         [NoColumn]
@@ -136,6 +136,11 @@ namespace ZJ.App.Entity
         {
             get
             {
+                //无文章类别时
+                if (this.CategoryId == 0)
+                {
+                    return string.Format(this.HrefTpl, this.Id.ToString()); //直接把文件Id放入Href中
+                }
                 return string.Format(this.HrefTpl, this.NoOfCategory.ToString().PadLeft(2, '0'));
             }
             set
@@ -250,7 +255,10 @@ namespace ZJ.App.Entity
 
         public class MyImage
         {
-            public int ImageID { get; set; }
+            /// <summary>
+            /// 类型int 默认情况下ModelState会做必填验证,所以不允许为0
+            /// </summary>
+            public int? Id { get; set; }
             public string ImgFileName { get; set; }
         }
 

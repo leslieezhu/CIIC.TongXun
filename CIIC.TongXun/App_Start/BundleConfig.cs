@@ -13,7 +13,8 @@ namespace CIIC.TongXun
                         "~/Scripts/jquery.cookie.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Scripts/jquery.validate*"));
+                        "~/Scripts/jqueryvalidation/1.17.0/jquery.validate*",
+                        "~/Scripts/jqueryvalidation/jquery.validate.unobtrusive.js"));
 
             // 使用要用于开发和学习的 Modernizr 的开发版本。然后，当你做好
             // 生产准备就绪，请使用 https://modernizr.com 上的生成工具仅选择所需的测试。
@@ -40,6 +41,8 @@ namespace CIIC.TongXun
                       "~/Content/plugins/dataTables/jquery.datatables.min.css",
                       "~/Content/plugins/dataTables/select.dataTables.min.css"));
 
+            
+
             // dataTables 
             bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
                       "~/Scripts/plugins/dataTables/1.10.20/jquery.datatables.min.js",
@@ -57,6 +60,14 @@ namespace CIIC.TongXun
                       "~/Scripts/plugins/jQuery-File-Upload/jquery.fileupload.js",
                       "~/Scripts/plugins/jQuery-File-Upload/jquery.fileupload-process.js",
                       "~/Scripts/plugins/jQuery-File-Upload/jquery.fileupload-validate.js"));
+
+            // select2 css style
+            bundles.Add(new StyleBundle("~/Content/select2Styles").Include(
+                      "~/Content/plugins/select2/select2.min.css", new CssRewriteUrlTransform()));
+            // select2 
+            bundles.Add(new ScriptBundle("~/bundles/select2").Include(
+                      "~/Scripts/plugins/select2/select2.full.min.js"));
+
         }
     }
 }

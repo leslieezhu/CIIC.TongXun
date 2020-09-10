@@ -12,6 +12,7 @@ using ZJ.App.Common;
 using ZJ.App.Entity;
 using System.Configuration;
 using ZJ.App.Common.Constants;
+using System.Text.RegularExpressions;
 
 namespace CIIC.TongXun.Areas.Admin
 {
@@ -72,6 +73,15 @@ namespace CIIC.TongXun.Areas.Admin
                 parm.ColumnType = DbType.Int32;
                 parms.Add(parm);
             }
+
+            //默认条件IsDelete!=1,软删标准
+            //parm = new SqlDbParameter();
+            //parm.ColumnName = "IsDelete";
+            //parm.ParameterName = "IsDelete";
+            //parm.QualificationType = SqlDbParameter.QualificationSymbol.IsNull;
+            //parm.ColumnType = DbType.Int32;
+            //parms.Add(parm);
+
             int recordCount;
             int draw = Convert.ToInt32(Request["draw"]);
             int start = Convert.ToInt32(Request["start"]);
@@ -137,38 +147,40 @@ namespace CIIC.TongXun.Areas.Admin
                     articleBLL.UpdateArticlePropertyIdByID(journalArticleRelationEntity.Id, article.Id);
                 }
                 //Step3 维护照片关系
-                if (article.ImgFileList != null)
-                {
-                    ArticleImageBLL articleImageBLL = new ArticleImageBLL();
-                    int j = 1;
-                    for (int i = 0; i < article.ImgFileList.Count; i++)
-                    {
-                        string savePath = System.Web.HttpContext.Current.Server.MapPath("~");
-                        string fromPath = savePath + ConfigurationManager.AppSettings["UploadTmp"] + article.ImgFileList[i].ImgFileName;
-                        string fileExtension = Path.GetExtension(fromPath); // 文件扩展名
+                this.ArticleImageSave(article);
+                
+                //if (article.ImgFileList != null)
+                //{
+                //    ArticleImageBLL articleImageBLL = new ArticleImageBLL();
+                //    int j = 1;
+                //    for (int i = 0; i < article.ImgFileList.Count; i++)
+                //    {
+                //        string savePath = System.Web.HttpContext.Current.Server.MapPath("~");
+                //        string fromPath = savePath + ConfigurationManager.AppSettings["UploadTmp"] + article.ImgFileList[i].ImgFileName;
+                //        string fileExtension = Path.GetExtension(fromPath); // 文件扩展名
 
-                        string categoryFix = "other";
-                        //根据文件类别+分类下序数命名新图片名
-                        var firstKey = Constants.ChannelToCategory.FirstOrDefault(q => q.Value == article.CategoryId.Value).Key;
-                        if (!string.IsNullOrEmpty(firstKey))
-                        {
-                            categoryFix = firstKey;
-                        }
-                        string newFileName = categoryFix + article.NoOfCategory.ToString().PadLeft(2, '0') + "_" + j + fileExtension; // 文件扩展名  //jt01_1.jpg
-                        ++j;
-                        string toPath = savePath + ConfigurationManager.AppSettings["AriticleImagePath"] + newFileName;
-                        if (!Directory.Exists(savePath + ConfigurationManager.AppSettings["AriticleImagePath"]))
-                        {
-                            Directory.CreateDirectory(savePath + ConfigurationManager.AppSettings["AriticleImagePath"]);
-                        }
-                        System.IO.File.Copy(fromPath, toPath);
-                        //TODO Insert ArticleImage
-                        ArticleImageEntity articleImage = new ArticleImageEntity();
-                        articleImage.ArticleId = article.Id;
-                        articleImage.ImageFileName = newFileName;
-                        articleImageBLL.AddArticleImageEntity(articleImage);
-                    }
-                }
+                //        string categoryFix = "other";
+                //        //根据文件类别+分类下序数命名新图片名
+                //        var firstKey = Constants.ChannelToCategory.FirstOrDefault(q => q.Value == article.CategoryId.Value).Key;
+                //        if (!string.IsNullOrEmpty(firstKey))
+                //        {
+                //            categoryFix = firstKey;
+                //        }
+                //        string newFileName = categoryFix + article.NoOfCategory.ToString().PadLeft(2, '0') + "_" + j + fileExtension; // 文件扩展名  //jt01_1.jpg
+                //        ++j;
+                //        string toPath = savePath + ConfigurationManager.AppSettings["AriticleImagePath"] + newFileName;
+                //        if (!Directory.Exists(savePath + ConfigurationManager.AppSettings["AriticleImagePath"]))
+                //        {
+                //            Directory.CreateDirectory(savePath + ConfigurationManager.AppSettings["AriticleImagePath"]);
+                //        }
+                //        System.IO.File.Copy(fromPath, toPath);
+                //        //TODO Insert ArticleImage
+                //        ArticleImageEntity articleImage = new ArticleImageEntity();
+                //        articleImage.ArticleId = article.Id;
+                //        articleImage.ImageFileName = newFileName;
+                //        articleImageBLL.AddArticleImageEntity(articleImage);
+                //    }
+                //}
                 
                 return JsonConvert.SerializeObject(new { result = true, message = "", returnUrl = "/Admin/Article/Index?JournalId="+ article.JournalId });
             }
@@ -197,6 +209,7 @@ namespace CIIC.TongXun.Areas.Admin
                 parm.ColumnType = DbType.Int32;
                 parms.Add(parm);
                 DataTable dt = articleBLL.GetArticleTotal(parms); 
+                //TODO 如果有文章被删除,就不能用这样的取号处理逻辑
                 if (dt.Rows.Count > 0)
                 {
                     nextNoOfJournal = int.Parse(dt.Rows[0]["TOTAL"].ToString()) + 1;
@@ -266,6 +279,9 @@ namespace CIIC.TongXun.Areas.Admin
         [HttpPost]
         public string Edit(ArticleEntity articleUpdate)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).ToList();//查找具体出错的模型字段
+            //ModelState.Remove("Id");
+
             if (ModelState.IsValid)
             {
                 ArticleBLL articleBLL = new ArticleBLL();
@@ -291,11 +307,80 @@ namespace CIIC.TongXun.Areas.Admin
 
                 articleBLL.UpdateArticleEntity(article);
                 //TODO Step3 维护照片关系
+                this.ArticleImageSave(articleUpdate);
 
                 string returnUrl = article.JournalId.HasValue ? "/Admin/Article/Index?JournalId=" + article.JournalId : "/Admin/Article/Index";
                 return JsonConvert.SerializeObject(new { result = true, message = "", returnUrl = returnUrl });
             }
             return JsonConvert.SerializeObject(new { result = false, message = "" });
+        }
+
+        /// <summary>
+        /// 保存文章的相关图片
+        /// </summary>
+        /// <param name="article"></param>
+        public void ArticleImageSave(ArticleEntity article)
+        {
+            if (article.ImgFileList != null)
+            {
+                ArticleImageBLL articleImageBLL = new ArticleImageBLL();
+                //为图片命名获取参数
+               
+                List<SqlDbParameter> parms = new List<SqlDbParameter>();
+                SqlDbParameter parm = null;
+                parm = new SqlDbParameter();
+                parm.ColumnName = "ArticleId";
+                parm.ParameterName = "ArticleId";
+                parm.ParameterValue = article.Id;
+                parm.ColumnType = DbType.Int32;
+                parms.Add(parm);
+
+                
+
+                List<ArticleImageEntity> articleList = articleImageBLL.GetAllArticleImage(parms, "Id DESC");
+                int j = 1;
+                if (articleList.Count > 0) {
+
+                    Match numMatch = Regex.Match(articleList[0].ImageFileName, @"_(\d+)\."); //获取最大的编号
+                    string num = numMatch.Groups[1].Value;
+                    int _j = 0;
+                    if (int.TryParse(num, out _j)) {
+                        j = ++_j;
+                    }
+                }
+
+                for (int i = 0; i < article.ImgFileList.Count; i++)
+                {
+                    if (article.ImgFileList[i].Id != null) //New Add Picture
+                    {
+                        continue;
+                    }
+                    string savePath = System.Web.HttpContext.Current.Server.MapPath("~");
+                    string fromPath = savePath + ConfigurationManager.AppSettings["UploadTmp"] + article.ImgFileList[i].ImgFileName;
+                    string fileExtension = Path.GetExtension(fromPath); // 文件扩展名
+
+                    string categoryFix = "other";
+                    //根据文件类别+分类下序数命名新图片名
+                    var firstKey = Constants.ChannelToCategory.FirstOrDefault(q => q.Value == article.CategoryId.Value).Key;
+                    if (!string.IsNullOrEmpty(firstKey))
+                    {
+                        categoryFix = firstKey;
+                    }
+                    string newFileName = categoryFix + article.NoOfCategory.ToString().PadLeft(2, '0') + "_" + j + fileExtension; // 文件扩展名  //jt01_1.jpg
+                    ++j;
+                    string toPath = savePath + ConfigurationManager.AppSettings["AriticleImagePath"] + newFileName;
+                    if (!Directory.Exists(savePath + ConfigurationManager.AppSettings["AriticleImagePath"]))
+                    {
+                        Directory.CreateDirectory(savePath + ConfigurationManager.AppSettings["AriticleImagePath"]);
+                    }
+                    System.IO.File.Copy(fromPath, toPath);
+                    //TODO Insert ArticleImage
+                    ArticleImageEntity articleImage = new ArticleImageEntity();
+                    articleImage.ArticleId = article.Id;
+                    articleImage.ImageFileName = newFileName;
+                    articleImageBLL.AddArticleImageEntity(articleImage);
+                }
+            }
         }
 
         /// <summary>
@@ -312,9 +397,10 @@ namespace CIIC.TongXun.Areas.Admin
             //生成文章静态URL
             ArticleCategoryBLL articleCategoryBLL = new ArticleCategoryBLL();
             ArticleCategoryEntity categoryEntity = articleCategoryBLL.GetArticleCategoryEntityById(articleEntity.CategoryId);
-            articleEntity.HrefTpl = categoryEntity.HrefTpl;
+            //TODO 判断文章没有任何分类的情况
+            articleEntity.HrefTpl = categoryEntity != null ? categoryEntity.HrefTpl : "nocategory{0}.html";//文章没有类别时,详细页URL
 
-            if (!string.IsNullOrEmpty(categoryEntity.HrefTpl))
+            if (!string.IsNullOrEmpty(articleEntity.HrefTpl))
             {
                 //查文章对应的期刊
                 if (articleEntity.ArticlePropertyId.HasValue)
@@ -370,6 +456,50 @@ namespace CIIC.TongXun.Areas.Admin
                 return Redirect(staticURL);
             }
             return new EmptyResult();
+        }
+
+        public string GetImages(string articleId)
+        {
+            //获取文章关联的图片
+            ArticleImageBLL articleImageBLL = new ArticleImageBLL();
+            List<SqlDbParameter> parms = new List<SqlDbParameter>();
+            SqlDbParameter parm = new SqlDbParameter();
+            parm.ColumnName = "ArticleId";
+            parm.ParameterName = "ArticleId";
+            parm.ParameterValue = articleId;
+            parms.Add(parm);
+
+            parm = new SqlDbParameter();
+            parm.QualificationType = SqlDbParameter.QualificationSymbol.IsNull;
+            parm.ColumnName = "IsDelete";
+            parm.ParameterName = "IsDelete";
+            parms.Add(parm);
+
+            List<ArticleImageEntity> imageList = articleImageBLL.GetAllArticleImage(parms);
+
+            IDictionary info = new Hashtable();
+            if (imageList.Count == 0)
+            {
+                info.Add("data", null);
+                return JsonConvert.SerializeObject(info);
+            }
+            //封装属性url,saveName, name
+            foreach (var image in imageList)
+            {
+                image.url = "/" + ConfigurationManager.AppSettings["AriticleImagePath"] + image.ImageFileName;
+            }
+            info.Add("data", imageList);
+            return JsonConvert.SerializeObject(info);
+
+        }
+
+        public string DelImage(string articleImageId)
+        {
+            int _articleImageId = 0;
+            int.TryParse(articleImageId, out _articleImageId);
+            ArticleImageBLL articleImageBLL = new ArticleImageBLL();
+            int result = articleImageBLL.DelArticleImageByID(_articleImageId);
+            return JsonConvert.SerializeObject(result);
         }
 
     }

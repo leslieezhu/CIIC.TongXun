@@ -135,8 +135,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\ArticleController.cs" />
+    <Compile Include="Areas\Admin\Controllers\CategoryController.cs" />
     <Compile Include="Areas\Admin\Controllers\DemoController.cs" />
     <Compile Include="Areas\Admin\Controllers\JournalController.cs" />
+    <Compile Include="Areas\Admin\Models\SelectOption.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -155,14 +157,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Admin\Views\Demo\DataTables5.cshtml" />
+    <Content Include="Areas\Admin\Views\Demo\DataTables6.cshtml" />
+    <Content Include="Areas\Admin\Views\Category\Index.cshtml" />
+    <None Include="Areas\Admin\Views\Demo\ValidateDemo.cshtml" />
     <Content Include="Content\Admin\Site.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\plugins\dataTables\datatables.min.css" />
+    <Content Include="Content\plugins\dataTables\1.10.21\jquery.dataTables.min.css" />
+    <Content Include="Content\plugins\dataTables\buttons\1.6.3\buttons.dataTables.min.css" />
+    <Content Include="Content\plugins\dataTables\images\sort_asc.png" />
+    <Content Include="Content\plugins\dataTables\images\sort_asc_disabled.png" />
+    <Content Include="Content\plugins\dataTables\images\sort_both.png" />
+    <Content Include="Content\plugins\dataTables\images\sort_desc.png" />
+    <Content Include="Content\plugins\dataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\plugins\dataTables\jquery.dataTables.min.css" />
-    <Content Include="Content\plugins\dataTables\select.dataTables.min.css" />
+    <Content Include="Content\plugins\dataTables\rowreorder\1.2.7\rowReorder.dataTables.min.css" />
+    <Content Include="Content\plugins\dataTables\select\1.3.1\select.dataTables.min.css" />
     <Content Include="Content\plugins\dataTables\site-examples.css" />
     <Content Include="Content\plugins\datetimepicker\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\plugins\Gallery\blueimp-gallery.min.css" />
@@ -178,6 +191,7 @@
     <Content Include="Content\plugins\jQuery-File-Upload\jquery.fileupload-ui-noscript.css" />
     <Content Include="Content\plugins\jQuery-File-Upload\jquery.fileupload-ui.css" />
     <Content Include="Content\plugins\jQuery-File-Upload\jquery.fileupload.css" />
+    <Content Include="Content\plugins\select2\select2.min.css" />
     <Content Include="Content\plugins\sweetalert\sweetalert.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\font-awesome\css\font-awesome.css" />
@@ -300,31 +314,41 @@
     <Content Include="Areas\Admin\Views\Demo\DataTables.cshtml" />
     <Content Include="Areas\Admin\Views\Demo\DataTables3.cshtml" />
     <Content Include="Areas\Admin\Views\Demo\DataTables4.cshtml" />
+    <Content Include="Areas\Admin\Views\Demo\ArticleCategorySelect.cshtml" />
     <None Include="Scripts\jquery\3.3.1\jquery-3.3.1-vsdoc.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\ControlJS\article_create.js" />
     <Content Include="Scripts\ControlJS\article_edit.js" />
     <Content Include="Scripts\ControlJS\article_index.js" />
+    <Content Include="Scripts\ControlJS\category_index.js" />
+    <Content Include="Scripts\ControlJS\dataTables5.js" />
+    <Content Include="Scripts\ControlJS\dataTables6.js" />
     <Content Include="Scripts\ControlJS\demo_index.js" />
     <Content Include="Scripts\ControlJS\journal_create.js" />
     <Content Include="Scripts\ControlJS\journal_edit.js" />
     <Content Include="Scripts\ControlJS\journal_index.js" />
+    <Content Include="Scripts\ControlJS\validate_demo1.js" />
     <Content Include="Scripts\jquery.cookie.js" />
+    <Content Include="Scripts\jquery\1.12.4\jquery-1.12.4.min.js" />
     <Content Include="Scripts\jquery\3.3.1\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery\3.3.1\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery\3.3.1\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery\3.3.1\jquery-3.3.1.slim.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <None Include="Scripts\jqueryvalidation\1.17.0\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jqueryvalidation\1.17.0\jquery.validate.js" />
+    <Content Include="Scripts\jqueryvalidation\1.17.0\jquery.validate.min.js" />
+    <Content Include="Scripts\jqueryvalidation\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jqueryvalidation\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jquery\3.5.1\jquery-3.5.1.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\plugins\blueimp-gallery\jquery.blueimp-gallery.min.js" />
     <Content Include="Scripts\plugins\dataTables\1.10.20\jquery.dataTables.min.js" />
+    <Content Include="Scripts\plugins\dataTables\1.10.21\jquery.dataTables.min.js" />
+    <Content Include="Scripts\plugins\dataTables\buttons\1.6.3\dataTables.buttons.min.js" />
     <Content Include="Scripts\plugins\dataTables\datatables.min.js" />
-    <Content Include="Scripts\plugins\dataTables\dataTables.select.min.js" />
     <Content Include="Scripts\plugins\dataTables\localization\messages_cn.js" />
+    <Content Include="Scripts\plugins\dataTables\rowreorder\1.2.7\dataTables.rowReorder.min.js" />
+    <Content Include="Scripts\plugins\dataTables\select\1.3.1\dataTables.select.min.js" />
     <Content Include="Scripts\plugins\datetimepicker\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\plugins\datetimepicker\bootstrap-datetimepicker.zh-CN.js" />
     <Content Include="Scripts\plugins\datetimepicker\moment-with-locales.js" />
@@ -544,6 +568,10 @@
     <Content Include="Scripts\plugins\kindeditor\themes\qq\editor.gif" />
     <Content Include="Scripts\plugins\kindeditor\themes\qq\qq.css" />
     <Content Include="Scripts\plugins\kindeditor\themes\simple\simple.css" />
+    <Content Include="Scripts\plugins\select2\i18n\en.js" />
+    <Content Include="Scripts\plugins\select2\i18n\zh-CN.js" />
+    <Content Include="Scripts\plugins\select2\select2.full.min.js" />
+    <Content Include="Scripts\plugins\select2\select2.min.js" />
     <Content Include="Scripts\plugins\sweetalert\sweetalert.min.js" />
     <Content Include="Scripts\plugins\sweetalert\sweetalert_API.txt" />
     <Content Include="Web.config">
@@ -572,11 +600,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\ArticleJournal\" />
     <Folder Include="Content\plugins\adminLTE\" />
+    <Folder Include="Scripts\jqueryvalidation\1.19.2\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Common\" />
+    <Folder Include="Views\Demo\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -12,6 +12,18 @@ namespace ZJ.App.BLL
     public partial class ArticleCategoryBLL
     {
 
+        public DataTable GetArticleCategoryDataTable(List<SqlDbParameter> parms, string OrderBy)
+        {
+            ArticleCategoryDAL dal = new ArticleCategoryDAL();
+            return dal.GetArticleCategoryDataTable(parms, OrderBy);
+        }
+
+        public DataTable GetArticleCategoryDataTablePage(List<SqlDbParameter> parms, string OrderBy, int PageSize, int PageIndex, out int RecordCount)
+        {
+            ArticleCategoryDAL dal = new ArticleCategoryDAL();
+            return dal.GetArticleCategoryDataTablePage(parms, OrderBy, PageSize, PageIndex, out RecordCount);
+        }
+
         public List<ArticleCategoryEntity> GetArticleCategoryEntitiesByPId(int PId, string orderBy)
         {
             List<SqlDbParameter> parmsCategory = new List<SqlDbParameter>();

@@ -3,4 +3,7 @@ ALTER TABLE Article Add [ArticleTitleAlias] nvarchar(200)
 --置顶字段,即在首页显示
 ALTER TABLE Article Add [IsTop] int  NULL 
 --文章分类排序
-ALTER TABLE ArticleCategory Add [Order] int  NULL 
+ALTER TABLE ArticleCategory Add [Order] int  NULL
+
+ALTER TABLE ArticleImage Add [IsDelete] int  NULL 
+
