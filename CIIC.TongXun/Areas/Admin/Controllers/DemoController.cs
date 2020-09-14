@@ -17,7 +17,7 @@ namespace CIIC.TongXun.Areas.Admin.Controllers
         // GET: Admin/Demo
         public ActionResult Index()
         {
-            return View("~/Areas/Admin/Views/Demo/ValidateDemo.cshtml");
+            return View("~/Areas/Admin/Views/Demo/ValidateDemo4.cshtml");
             //当前期刊
             string journalId = "5";
             var model = new ArticleJournalEntity();

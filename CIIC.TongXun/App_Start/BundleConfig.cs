@@ -10,11 +10,14 @@ namespace CIIC.TongXun
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery/3.3.1/jquery-{version}.js",
-                        "~/Scripts/jquery.cookie.js"));
+                        "~/Scripts/jquery.cookie.js",
+                        "~/Scripts/jquery.form.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Scripts/jqueryvalidation/1.17.0/jquery.validate*",
-                        "~/Scripts/jqueryvalidation/jquery.validate.unobtrusive.js"));
+                        "~/Scripts/jqueryvalidation/1.19.2/jquery.validate.min.js",
+                        "~/Scripts/jqueryvalidation/1.19.2/additional-methods.min.js",
+                        "~/Scripts/jqueryvalidation/1.19.2/localization/messages_cn.js",
+                        "~/Scripts/jqueryvalidation/1.17.0/jquery.validate.unobtrusive.js"));
 
             // 使用要用于开发和学习的 Modernizr 的开发版本。然后，当你做好
             // 生产准备就绪，请使用 https://modernizr.com 上的生成工具仅选择所需的测试。

@@ -41,10 +41,32 @@ $(document).ready(function () {
             $("#hdCategoryId").val(currentRowData[0].Id);
             $("#category").val(currentRowData[0].CategoryName);
             $("#order").val(currentRowData[0].Order);
+            $("#form div.error").html("");
         }
     });
 
-    $("#btnCreate").click(save);
+    var validator = $("#signupForm").validate({
+        rules: {
+            category: "required",
+            order: {
+                required: true,
+                number:true
+            }        
+        },
+        //messages: {
+        //    category: "必填",
+        //    order: {
+        //        required: "必填",
+        //        number: "无效输入"
+        //    }
+        //},
+        errorLabelContainer: $("#form div.error"),
+        submitHandler: function (form) {
+            save();
+        }
+    });
+
+    //$("#btnCreate").click(save);
 });
 
 function save() {
@@ -53,11 +75,11 @@ function save() {
     var urlTarget = "/Admin/Category/Edit";
 
     $.ajax({
-        processData: false,
+        //processData: false,//可选项
         url: urlTarget,
         type: "POST",
         contentType: "application/json",
-        //data: JSON.stringify(categoryObj),
+        data: JSON.stringify(categoryObj),//必须设置
         success: function (data) {
             $("#categoryId").html("");
             $("#pcategoryName").html("");
